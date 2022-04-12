@@ -58,8 +58,6 @@ fn main() {
 
     match opt.cmd {
         None | Some(Command::Fetch {}) => {
-            println!("Fetching PRs");
-            println!("");
             let future = list_pulls();
             block_on(future).expect("Could not fetch PRs");
         },

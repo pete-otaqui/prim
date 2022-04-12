@@ -13,14 +13,14 @@ pub struct PrimPr {
 impl std::fmt::Display for PrimPr {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         writeln!(f, "**{}**", self.title)?;
-        writeln!(f, "{}", self.url)?;
+        writeln!(f, "- {}", self.url)?;
         writeln!(
             f,
-            "{}, {}",
+            "- {}, {}",
             plural(self.reviews, "review"),
             plural(self.comments, "comment")
         )?;
-        writeln!(f, "Created by {} {}", self.author, self.age)?;
+        writeln!(f, "- Created by {} {}", self.author, self.age)?;
         Ok(())
     }
 }
@@ -29,28 +29,41 @@ pub struct PrimPrList(pub Vec<PrimPr>);
 
 impl std::fmt::Display for PrimPrList {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        println!("PRs:");
-        println!("");
+        let mut open_prs: Vec<&PrimPr> = Vec::new();
         for pr in self.0.iter() {
             if pr.draft == false && pr.bot == false {
-                writeln!(f, "{}", pr)?;
+                open_prs.push(pr);
             }
         }
-        println!("Bot PRs:");
-        println!("");
+        let mut bot_prs: Vec<&PrimPr> = Vec::new();
         for pr in self.0.iter() {
             if pr.bot == true {
-                writeln!(f, "{}", pr)?;
+                bot_prs.push(pr);
+            }
+        }
+        let mut draft_prs: Vec<&PrimPr> = Vec::new();
+        for pr in self.0.iter() {
+            if pr.draft == true {
+                draft_prs.push(pr);
             }
         }
 
-        println!("Draft Prs:");
+        println!("## Open PRs ({}):", open_prs.len());
         println!("");
-        for pr in self.0.iter() {
-            if pr.draft == true {
-                writeln!(f, "{}", pr)?;
-            }
+        for pr in open_prs {
+            writeln!(f, "{}", pr)?;
         }
+        println!("## Bot PRs ({}):", bot_prs.len());
+        println!("");
+        for pr in bot_prs {
+            writeln!(f, "{}", pr)?;
+        }
+        println!("## Draft PRs ({}):", draft_prs.len());
+        println!("");
+        for pr in draft_prs {
+            writeln!(f, "{}", pr)?;
+        }
+
         Ok(())
     }
 }
