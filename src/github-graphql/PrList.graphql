@@ -1,0 +1,25 @@
+query PrList($name: String!, $owner: String!) {
+  repository(name:$name, owner:$owner) {
+    pullRequests(first:50, orderBy: { field:CREATED_AT, direction:ASC }, states:[OPEN]) {
+      totalCount
+      nodes {
+        author {
+          __typename
+          login
+        }
+        createdAt # .. must be forced to be String :/
+        state
+        title
+        isDraft
+        url
+        mergeable
+        comments {
+          totalCount
+        }
+        reviews {
+          totalCount
+        }
+      }
+    }
+  }
+}
